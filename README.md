@@ -16,10 +16,10 @@ A mobile app for unhurried, focused quiet time on iOS and Android.
    bun install
    ```
 
-2. Copy the env example and fill in your Supabase project URL and publishable/anon key (never the service role key):
+2. Copy the env example and fill in your Supabase project URL and publishable key (never the secret key):
 
    ```bash
-   cp .env.example .env
+   cp .env.example .env.local
    ```
 
 ## Run

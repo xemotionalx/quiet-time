@@ -31,6 +31,12 @@ yarn-error.*
 # env (keep .env.example)
 .env
 .env.local
+.env*.local
+
+# this project uses bun — do not commit other lockfiles
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
 
 # macOS / Windows / editors
 .DS_Store
