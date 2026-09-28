@@ -21,6 +21,7 @@ export type Database = {
           created_at: string
           display_name: string | null
           id: string
+          username: string
         }
         Insert: {
           avatar_url?: string | null
@@ -28,6 +29,7 @@ export type Database = {
           created_at?: string
           display_name?: string | null
           id: string
+          username: string
         }
         Update: {
           avatar_url?: string | null
@@ -35,6 +37,7 @@ export type Database = {
           created_at?: string
           display_name?: string | null
           id?: string
+          username?: string
         }
         Relationships: []
       }
@@ -43,7 +46,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      is_display_name_available: { Args: { name: string }; Returns: boolean }
+      is_username_available: { Args: { name: string }; Returns: boolean }
     }
     Enums: {
       [_ in never]: never

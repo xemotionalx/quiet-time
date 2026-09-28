@@ -5,46 +5,48 @@ import { KeyboardAvoidingView, Platform, StyleSheet } from "react-native";
 import { supabase } from "@/lib/supabase";
 import {
   getConfirmPasswordError,
+  getDisplayNameError,
   getPasswordError,
+  getUsernameError,
   isValidEmail,
 } from "@/lib/validation";
 import { Button, ErrorMessage, TextField } from "@/ui";
 
 export default function SignUp() {
   const [displayName, setDisplayName] = useState("");
+  const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
   const [displayNameError, setDisplayNameError] = useState("");
+  const [usernameError, setUsernameError] = useState("");
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
   const [confirmPasswordError, setConfirmPasswordError] = useState("");
   const [formError, setFormError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  async function checkDisplayNameAvailable(name: string) {
-    const trimmed = name.trim();
-    if (!trimmed) return true;
-
-    const { data } = await supabase.rpc("is_display_name_available", {
-      name: trimmed,
+  async function checkUsernameAvailable(name: string) {
+    const { data } = await supabase.rpc("is_username_available", {
+      name,
     });
 
     if (data === false) {
-      setDisplayNameError("That name is taken");
+      setUsernameError("That username is taken");
       return false;
     }
     return true;
   }
 
-  async function handleDisplayNameBlur() {
-    await checkDisplayNameAvailable(displayName);
+  async function handleUsernameBlur() {
+    if (getUsernameError(username)) return;
+    await checkUsernameAvailable(username);
   }
 
   async function handleSubmit() {
-    const trimmedName = displayName.trim();
-    const nameError = trimmedName ? "" : "Display name is required";
+    const nameError = getDisplayNameError(displayName) ?? "";
+    const usernameValidationError = getUsernameError(username) ?? "";
     const emailValidationError = isValidEmail(email)
       ? ""
       : "Enter a valid email address";
@@ -53,6 +55,7 @@ export default function SignUp() {
       getConfirmPasswordError(password, confirmPassword) ?? "";
 
     setDisplayNameError(nameError);
+    setUsernameError(usernameValidationError);
     setEmailError(emailValidationError);
     setPasswordError(passwordValidationError);
     setConfirmPasswordError(confirmValidationError);
@@ -60,6 +63,7 @@ export default function SignUp() {
 
     if (
       nameError ||
+      usernameValidationError ||
       emailValidationError ||
       passwordValidationError ||
       confirmValidationError
@@ -68,7 +72,7 @@ export default function SignUp() {
     }
 
     setLoading(true);
-    const isAvailable = await checkDisplayNameAvailable(trimmedName);
+    const isAvailable = await checkUsernameAvailable(username);
     if (!isAvailable) {
       setLoading(false);
       return;
@@ -77,7 +81,7 @@ export default function SignUp() {
     const { error } = await supabase.auth.signUp({
       email,
       password,
-      options: { data: { display_name: trimmedName } },
+      options: { data: { display_name: displayName.trim(), username } },
     });
     setLoading(false);
 
@@ -87,7 +91,7 @@ export default function SignUp() {
     }
 
     if (error.message === "Database error saving new user") {
-      setDisplayNameError("That name is taken");
+      setUsernameError("That username is taken");
       return;
     }
 
@@ -103,11 +107,21 @@ export default function SignUp() {
         label="Display name"
         value={displayName}
         onChangeText={setDisplayName}
-        onBlur={handleDisplayNameBlur}
         autoCapitalize="words"
         autoComplete="name"
         maxLength={50}
         error={displayNameError}
+      />
+      <TextField
+        label="Username"
+        value={username}
+        onChangeText={(t) => setUsername(t.toLowerCase())}
+        onBlur={handleUsernameBlur}
+        autoCapitalize="none"
+        autoCorrect={false}
+        autoComplete="username"
+        maxLength={30}
+        error={usernameError}
       />
       <TextField
         label="Email"

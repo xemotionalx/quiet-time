@@ -7,7 +7,10 @@ import { Button } from "@/ui";
 
 export default function Index() {
   const { session } = useAuth();
-  const [displayName, setDisplayName] = useState<string | null>(null);
+  const [profile, setProfile] = useState<{
+    display_name: string | null;
+    username: string;
+  } | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -16,12 +19,12 @@ export default function Index() {
     let isMounted = true;
     supabase
       .from("profiles")
-      .select("display_name")
+      .select("display_name, username")
       .eq("id", session.user.id)
       .single()
       .then(({ data }) => {
         if (isMounted) {
-          setDisplayName(data?.display_name ?? null);
+          setProfile(data ?? null);
           setIsLoading(false);
         }
       });
@@ -35,8 +38,10 @@ export default function Index() {
 
   return (
     <View style={styles.container}>
-      {!isLoading ? (
-        <Text>Signed in as {displayName ?? session.user.email}</Text>
+      {!isLoading && profile ? (
+        <Text>
+          Signed in as {profile.display_name} (@{profile.username})
+        </Text>
       ) : null}
       <Button title="Sign Out" onPress={() => supabase.auth.signOut()} />
     </View>
