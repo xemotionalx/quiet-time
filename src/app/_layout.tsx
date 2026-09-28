@@ -24,7 +24,7 @@ function RootNavigator() {
         <Stack.Screen name="complete-profile" />
       </Stack.Protected>
       <Stack.Protected guard={!!session && isProfileComplete === true}>
-        <Stack.Screen name="index" />
+        <Stack.Screen name="(tabs)" />
       </Stack.Protected>
     </Stack>
   );

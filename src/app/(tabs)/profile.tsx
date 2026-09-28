@@ -8,7 +8,7 @@ import { useAuth } from "@/providers/AuthProvider";
 import { Button } from "@/components";
 import { colors, space, type } from "@/theme/tokens";
 
-export default function Index() {
+export default function Profile() {
   const { session } = useAuth();
   const [profile, setProfile] = useState<{
     display_name: string | null;
@@ -36,8 +36,6 @@ export default function Index() {
       isMounted = false;
     };
   }, [session]);
-
-  if (!session) return null;
 
   return (
     <SafeAreaView style={styles.safeArea}>
