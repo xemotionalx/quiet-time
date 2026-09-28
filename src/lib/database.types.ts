@@ -14,6 +14,39 @@ export type Database = {
   }
   public: {
     Tables: {
+      admins: {
+        Row: {
+          created_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      approved_emails: {
+        Row: {
+          added_by: string | null
+          created_at: string
+          email: string
+        }
+        Insert: {
+          added_by?: string | null
+          created_at?: string
+          email: string
+        }
+        Update: {
+          added_by?: string | null
+          created_at?: string
+          email?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -49,7 +82,17 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      hook_before_user_created: { Args: { event: Json }; Returns: Json }
+      is_admin: { Args: never; Returns: boolean }
       is_username_available: { Args: { name: string }; Returns: boolean }
+      list_approved_emails: {
+        Args: never
+        Returns: {
+          created_at: string
+          email: string
+          has_account: boolean
+        }[]
+      }
     }
     Enums: {
       [_ in never]: never

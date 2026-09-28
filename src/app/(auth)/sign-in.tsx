@@ -32,12 +32,6 @@ export default function SignIn() {
 
     if (!signInError) return;
 
-    if (signInError.code === "email_not_confirmed") {
-      await supabase.auth.resend({ type: "signup", email });
-      router.push({ pathname: "/verify", params: { email } });
-      return;
-    }
-
     setError(signInError.message);
   }
 

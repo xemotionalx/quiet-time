@@ -20,6 +20,11 @@ import {
 import { Button, ErrorMessage, IconButton, TextField } from "@/components";
 import { aliases, colors, space, type } from "@/theme/tokens";
 
+// hook_before_user_created (supabase/migrations) rejects with HTTP 403 and
+// this message when the email isn't in approved_emails.
+const NOT_APPROVED_STATUS = 403;
+const NOT_APPROVED_HINT = "Quiet Time list";
+
 export default function SignUp() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -57,7 +62,14 @@ export default function SignUp() {
     setLoading(false);
 
     if (!error) {
-      router.push({ pathname: "/verify", params: { email } });
+      return;
+    }
+
+    if (
+      error.status === NOT_APPROVED_STATUS &&
+      error.message.includes(NOT_APPROVED_HINT)
+    ) {
+      setEmailError(error.message);
       return;
     }
 

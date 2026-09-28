@@ -9,7 +9,9 @@
     "lint": "expo lint",
     "format": "prettier --write .",
     "typecheck": "tsc --noEmit",
-    "db:types": "bunx supabase gen types --linked --lang=typescript --schema public > src/lib/database.types.ts"
+    "db:types": "bunx supabase gen types --linked --lang=typescript --schema public > src/lib/database.types.ts",
+    "approve": "bun scripts/approve.ts",
+    "make-admin": "bun scripts/make-admin.ts"
   },
   "dependencies": {
     "@expo/ui": "~57.0.20",
