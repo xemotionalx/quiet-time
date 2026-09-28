@@ -21,6 +21,7 @@ export type Database = {
           created_at: string
           display_name: string | null
           id: string
+          profile_completed: boolean
           username: string
         }
         Insert: {
@@ -29,6 +30,7 @@ export type Database = {
           created_at?: string
           display_name?: string | null
           id: string
+          profile_completed?: boolean
           username: string
         }
         Update: {
@@ -37,6 +39,7 @@ export type Database = {
           created_at?: string
           display_name?: string | null
           id?: string
+          profile_completed?: boolean
           username?: string
         }
         Relationships: []

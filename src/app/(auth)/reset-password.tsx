@@ -1,10 +1,13 @@
+import { StatusBar } from "expo-status-bar";
 import { useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
 import { KeyboardAvoidingView, Platform, StyleSheet, Text } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 import { supabase } from "@/lib/supabase";
 import { getConfirmPasswordError, getPasswordError } from "@/lib/validation";
-import { Button, ErrorMessage, TextField, TextLink } from "@/ui";
+import { Button, ErrorMessage, TextField, TextLink } from "@/components";
+import { colors, space, type } from "@/theme/tokens";
 
 const RESEND_COOLDOWN_SECONDS = 60;
 
@@ -76,53 +79,66 @@ export default function ResetPassword() {
   }
 
   return (
-    <KeyboardAvoidingView
-      style={styles.container}
-      behavior={Platform.OS === "ios" ? "padding" : undefined}
-    >
-      <Text>Enter the code sent to {email} and choose a new password</Text>
-      <TextField
-        label="Code"
-        value={code}
-        onChangeText={setCode}
-        keyboardType="number-pad"
-        maxLength={6}
-        textContentType="oneTimeCode"
-      />
-      <TextField
-        label="New password"
-        value={password}
-        onChangeText={setPassword}
-        secureTextEntry
-        autoCapitalize="none"
-        autoComplete="new-password"
-        error={passwordError}
-      />
-      <TextField
-        label="Confirm new password"
-        value={confirmPassword}
-        onChangeText={setConfirmPassword}
-        secureTextEntry
-        autoCapitalize="none"
-        autoComplete="new-password"
-        error={confirmPasswordError}
-      />
-      <Button
-        title="Reset password"
-        onPress={handleSubmit}
-        loading={loading}
-        disabled={loading}
-      />
-      <TextLink
-        title={cooldown > 0 ? `Resend code (${cooldown}s)` : "Resend code"}
-        onPress={handleResend}
-        disabled={cooldown > 0}
-      />
-      <ErrorMessage message={formError} />
-    </KeyboardAvoidingView>
+    <SafeAreaView style={styles.safeArea}>
+      <StatusBar style="light" />
+      <KeyboardAvoidingView
+        style={styles.container}
+        behavior={Platform.OS === "ios" ? "padding" : undefined}
+      >
+        <Text style={styles.text}>
+          Enter the code sent to {email} and choose a new password
+        </Text>
+        <TextField
+          label="Code"
+          value={code}
+          onChangeText={setCode}
+          keyboardType="number-pad"
+          maxLength={6}
+          textContentType="oneTimeCode"
+        />
+        <TextField
+          label="New password"
+          value={password}
+          onChangeText={setPassword}
+          secureTextEntry
+          autoCapitalize="none"
+          autoComplete="new-password"
+          error={passwordError}
+        />
+        <TextField
+          label="Confirm new password"
+          value={confirmPassword}
+          onChangeText={setConfirmPassword}
+          secureTextEntry
+          autoCapitalize="none"
+          autoComplete="new-password"
+          error={confirmPasswordError}
+        />
+        <Button onPress={handleSubmit} disabled={loading} block>
+          Reset password
+        </Button>
+        <TextLink onPress={handleResend} disabled={cooldown > 0}>
+          {cooldown > 0 ? `Resend code (${cooldown}s)` : "Resend code"}
+        </TextLink>
+        <ErrorMessage message={formError} />
+      </KeyboardAvoidingView>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, justifyContent: "center", alignItems: "center" },
+  safeArea: { flex: 1, backgroundColor: colors.ink },
+  container: {
+    flex: 1,
+    justifyContent: "center",
+    paddingHorizontal: space.space6,
+    gap: space.space5,
+  },
+  text: {
+    fontSize: type.body.fontSize,
+    lineHeight: type.body.lineHeight,
+    fontWeight: type.body.fontWeight,
+    color: colors.chalk,
+    textAlign: "center",
+  },
 });

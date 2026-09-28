@@ -1,10 +1,13 @@
+import { StatusBar } from "expo-status-bar";
 import { router } from "expo-router";
 import { useState } from "react";
 import { KeyboardAvoidingView, Platform, StyleSheet } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 import { supabase } from "@/lib/supabase";
 import { isValidEmail } from "@/lib/validation";
-import { Button, ErrorMessage, TextField } from "@/ui";
+import { Button, ErrorMessage, TextField } from "@/components";
+import { colors, space } from "@/theme/tokens";
 
 export default function ForgotPassword() {
   const [email, setEmail] = useState("");
@@ -32,30 +35,36 @@ export default function ForgotPassword() {
   }
 
   return (
-    <KeyboardAvoidingView
-      style={styles.container}
-      behavior={Platform.OS === "ios" ? "padding" : undefined}
-    >
-      <TextField
-        label="Email"
-        value={email}
-        onChangeText={setEmail}
-        keyboardType="email-address"
-        autoCapitalize="none"
-        autoComplete="email"
-        error={emailError}
-      />
-      <Button
-        title="Send code"
-        onPress={handleSubmit}
-        loading={loading}
-        disabled={loading}
-      />
-      <ErrorMessage message={formError} />
-    </KeyboardAvoidingView>
+    <SafeAreaView style={styles.safeArea}>
+      <StatusBar style="light" />
+      <KeyboardAvoidingView
+        style={styles.container}
+        behavior={Platform.OS === "ios" ? "padding" : undefined}
+      >
+        <TextField
+          label="Email"
+          value={email}
+          onChangeText={setEmail}
+          keyboardType="email-address"
+          autoCapitalize="none"
+          autoComplete="email"
+          error={emailError}
+        />
+        <Button onPress={handleSubmit} disabled={loading} block>
+          Send code
+        </Button>
+        <ErrorMessage message={formError} />
+      </KeyboardAvoidingView>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, justifyContent: "center", alignItems: "center" },
+  safeArea: { flex: 1, backgroundColor: colors.ink },
+  container: {
+    flex: 1,
+    justifyContent: "center",
+    paddingHorizontal: space.space6,
+    gap: space.space5,
+  },
 });

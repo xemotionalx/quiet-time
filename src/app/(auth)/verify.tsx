@@ -1,9 +1,12 @@
+import { StatusBar } from "expo-status-bar";
 import { useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
 import { KeyboardAvoidingView, Platform, StyleSheet, Text } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 import { supabase } from "@/lib/supabase";
-import { Button, ErrorMessage, TextField, TextLink } from "@/ui";
+import { Button, ErrorMessage, TextField, TextLink } from "@/components";
+import { colors, space, type } from "@/theme/tokens";
 
 const RESEND_COOLDOWN_SECONDS = 60;
 
@@ -52,35 +55,46 @@ export default function Verify() {
   }
 
   return (
-    <KeyboardAvoidingView
-      style={styles.container}
-      behavior={Platform.OS === "ios" ? "padding" : undefined}
-    >
-      <Text>Enter the code sent to {email}</Text>
-      <TextField
-        label="Code"
-        value={code}
-        onChangeText={setCode}
-        keyboardType="number-pad"
-        maxLength={6}
-        textContentType="oneTimeCode"
-      />
-      <Button
-        title="Verify"
-        onPress={handleSubmit}
-        loading={loading}
-        disabled={loading}
-      />
-      <TextLink
-        title={cooldown > 0 ? `Resend code (${cooldown}s)` : "Resend code"}
-        onPress={handleResend}
-        disabled={cooldown > 0}
-      />
-      <ErrorMessage message={error} />
-    </KeyboardAvoidingView>
+    <SafeAreaView style={styles.safeArea}>
+      <StatusBar style="light" />
+      <KeyboardAvoidingView
+        style={styles.container}
+        behavior={Platform.OS === "ios" ? "padding" : undefined}
+      >
+        <Text style={styles.text}>Enter the code sent to {email}</Text>
+        <TextField
+          label="Code"
+          value={code}
+          onChangeText={setCode}
+          keyboardType="number-pad"
+          maxLength={6}
+          textContentType="oneTimeCode"
+        />
+        <Button onPress={handleSubmit} disabled={loading} block>
+          Verify
+        </Button>
+        <TextLink onPress={handleResend} disabled={cooldown > 0}>
+          {cooldown > 0 ? `Resend code (${cooldown}s)` : "Resend code"}
+        </TextLink>
+        <ErrorMessage message={error} />
+      </KeyboardAvoidingView>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, justifyContent: "center", alignItems: "center" },
+  safeArea: { flex: 1, backgroundColor: colors.ink },
+  container: {
+    flex: 1,
+    justifyContent: "center",
+    paddingHorizontal: space.space6,
+    gap: space.space5,
+  },
+  text: {
+    fontSize: type.body.fontSize,
+    lineHeight: type.body.lineHeight,
+    fontWeight: type.body.fontWeight,
+    color: colors.chalk,
+    textAlign: "center",
+  },
 });
